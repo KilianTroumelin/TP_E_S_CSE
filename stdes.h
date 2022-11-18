@@ -1,9 +1,14 @@
+
+
 #ifndef _STDES_H
 #define _STDES_H
 
 struct _ES_FICHIER{
-    
+    int file_descriptor;
+    char *read_buffer;
+    char *write_buffer;
 };
+
 
 typedef struct _ES_FICHIER FICHIER;
 
