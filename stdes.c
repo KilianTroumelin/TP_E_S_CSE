@@ -1,25 +1,31 @@
 #include "stdes.h"
 #include <fcntl.h>
+#include <stdlib.h>
+
 
 FICHIER *ouvrir(const char *nom, char mode){
-FICHIER *file=malloc(sizeof(FICHIER));
-    if (mode =='L')
-        file->file_descriptor=open(nom, O_RDONLY);
-    if (mode =='R')
-        file->file_descriptor=open(nom, O_WRONLY);
-    else
-        return 0;
-    
-return &file;
+    FICHIER *file=malloc(sizeof(FICHIER));
+        file->file_buffer=malloc(1024);
+        if (mode =='L'){
+            file->file_descriptor=open(nom, O_RDONLY);
+            
+        }if (mode =='R')
+            file->file_descriptor=open(nom, O_WRONLY);
+        else
+            return 0;
+    return file;
 }
 
 int fermer(FICHIER*f){
-    
-return 0;
+    int i = close(f);
+    free(f);
+    return i;
 }
 
 int lire(void *p, unsigned int taille, unsigned int nbelem, FICHIER *f){
-return 0;
+    read(&f->file_descriptor, &f->file_buffer, 1024);
+    unsigned int tot=taille*nbelem;
+    return 0;
 }
 
 int ecrire(const void *p, unsigned int taille, unsigned int nbelem, FICHIER *f){

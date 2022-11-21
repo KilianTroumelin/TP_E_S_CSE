@@ -5,10 +5,9 @@
 
 struct _ES_FICHIER{
     int file_descriptor;
-    char *read_buffer;
-    char *write_buffer;
+    void *file_buffer;
+    size_t current_pos;
 };
-
 
 typedef struct _ES_FICHIER FICHIER;
 

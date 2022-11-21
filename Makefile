@@ -41,5 +41,11 @@ test : test.o stdes.o
 test.o : test.c stdes.h
 	$(CC) -c $(CFLAGS) -o test.o test.c
 
+test-stdes : test-stdes.o stdes.o 
+	$(CC) $(CFLAGS) -o test-stdes test-stdes.o stdes.o
+
+test-stdes.o : test-stdes.c stdes.h 
+	$(CC) -c $(CFLAGS) -o test-stdes.o test-stdes.c
+
 clean : 
 	$(RM) *.o
