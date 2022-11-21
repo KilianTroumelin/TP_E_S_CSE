@@ -1,15 +1,14 @@
 #include "stdes.h"
 #include <fcntl.h>
 #include <stdlib.h>
-
+#include <unistd.h>
 
 FICHIER *ouvrir(const char *nom, char mode){
     FICHIER *file=malloc(sizeof(FICHIER));
         file->file_buffer=malloc(1024);
-        if (mode =='L'){
+        if (mode =='L')
             file->file_descriptor=open(nom, O_RDONLY);
-            
-        }if (mode =='R')
+        if (mode =='R')
             file->file_descriptor=open(nom, O_WRONLY);
         else
             return 0;
@@ -17,14 +16,22 @@ FICHIER *ouvrir(const char *nom, char mode){
 }
 
 int fermer(FICHIER*f){
-    int i = close(f);
+    int i = close(f->file_descriptor);
     free(f);
     return i;
 }
 
 int lire(void *p, unsigned int taille, unsigned int nbelem, FICHIER *f){
-    read(&f->file_descriptor, &f->file_buffer, 1024);
+    read(f->file_descriptor, f->file_buffer, 1024);
     unsigned int tot=taille*nbelem;
+    for (unsigned int i = 0; i < tot; i++)
+    {
+        p=f->file_buffer;
+        p+=1;
+        f->current_pos+=1;
+    }
+    
+    
     return 0;
 }
 
