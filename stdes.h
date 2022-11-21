@@ -6,8 +6,10 @@
 struct _ES_FICHIER{
     int file_descriptor;
     void *file_buffer;
-    size_t current_pos;
+    unsigned int current_pos;
 };
+
+
 
 typedef struct _ES_FICHIER FICHIER;
 
