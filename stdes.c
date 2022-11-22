@@ -2,12 +2,14 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 FICHIER *ouvrir(const char *nom, char mode){
     FICHIER *file=malloc(sizeof(FICHIER));
         file->file_buffer=malloc(1024);
-        if (mode =='L')
+        if (mode =='L'){
             file->file_descriptor=open(nom, O_RDONLY);
+            read(file->file_descriptor, file->file_buffer, 1024);}
         if (mode =='R')
             file->file_descriptor=open(nom, O_WRONLY);
         else
@@ -22,17 +24,26 @@ int fermer(FICHIER*f){
 }
 
 int lire(void *p, unsigned int taille, unsigned int nbelem, FICHIER *f){
-    read(f->file_descriptor, f->file_buffer, 1024);
     unsigned int tot=taille*nbelem;
-    for (unsigned int i = 0; i < tot; i++)
-    {
-        p=f->file_buffer;
-        p+=1;
-        f->current_pos+=1;
+    if (tot>1024)
+        return 0;
+    if (tot>1024-f->current_pos){
+        memcpy(f->file_buffer, p, (f->file_buffer+f->current_pos)-f->file_buffer);
+        // write dans le buffer utilisateur et déplacement du reste du buffer
+        memcpy(f->file_buffer, f->file_buffer+1024-f->current_pos, 1024-f->current_pos);
+        f->current_pos=1024-f->current_pos;
+        read(f->file_descriptor, f->file_buffer+f->current_pos, 1024-f->current_pos);
+        for (unsigned int i = 0; i < tot; i++)//copy des octets
+        {
+            memcpy(f->file_buffer+f->current_pos, p+f->current_pos, 1);
+            f->current_pos+=1;    
+        }
     }
-    
-    
-    return 0;
+    for (unsigned int i = 0; i < tot; i++)//copy des octets
+    {   memcpy(f->file_buffer+f->current_pos, p+f->current_pos, 1);
+        f->current_pos+=1;    }
+
+    return nbelem;
 }
 
 int ecrire(const void *p, unsigned int taille, unsigned int nbelem, FICHIER *f){
@@ -40,6 +51,7 @@ return 0;
 }
 
 int vider(FICHIER *f){
+    f->current_pos=0;
 return 0;
 }
 
