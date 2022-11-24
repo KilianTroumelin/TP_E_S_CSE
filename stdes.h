@@ -5,8 +5,10 @@
 
 struct _ES_FICHIER{
     int file_descriptor;
-    void *file_buffer;
+    char *file_buffer;
     unsigned int current_pos;
+    long buff_size;
+    char mode;
 };
 
 

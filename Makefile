@@ -1,9 +1,9 @@
 CC=gcc
-CFLAGS=-Wall -g -O2
+CFLAGS=-Wall -g -O2 -fno-stack-protector
 LDLIBS=-unistd
 RM=rm -f
 
-all : eval-libc eval-syscall test-format test-rand test clean
+all : eval-libc test-format test-rand test test-stdes clean
 
 stdes : stdes.o 
 	$(CC) $(CFLAGS) -o stdes stdes.o $(LDLIBS)
@@ -42,7 +42,7 @@ test.o : test.c stdes.h
 	$(CC) -c $(CFLAGS) -o test.o test.c
 
 test-stdes : test-stdes.o stdes.o 
-	$(CC) $(CFLAGS) -o test-stdes test-stdes.o stdes.o
+	$(CC) $(CFLAGS) -o test-stdes test-stdes.o stdes.o $(LDLIBS)
 
 test-stdes.o : test-stdes.c stdes.h 
 	$(CC) -c $(CFLAGS) -o test-stdes.o test-stdes.c
