@@ -16,7 +16,7 @@ FICHIER *ouvrir(const char *nom, char mode){
         else {
             if (mode =='E')
             {
-                file->file_descriptor=open(nom, O_WRONLY);
+                file->file_descriptor=open(nom, O_WRONLY || O_CREAT);
                 file->buff_size=0;
                 file->mode='E';
             }
