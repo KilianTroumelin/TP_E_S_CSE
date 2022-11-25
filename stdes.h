@@ -6,7 +6,7 @@
 struct _ES_FICHIER{
     int file_descriptor;
     char *file_buffer;
-    unsigned int current_pos;
+    int current_pos;
     long buff_size;
     char mode;
 };
