@@ -2,6 +2,8 @@
 
 #ifndef _STDES_H
 #define _STDES_H
+#define BUFFER_SIZE 1024
+
 
 struct _ES_FICHIER{
     int file_descriptor;
@@ -17,7 +19,8 @@ typedef struct _ES_FICHIER FICHIER;
 
 extern FICHIER *stdout;
 extern FICHIER *stderr;
-
+char *itoa(int v, char * str);
+int pw(int n,int p);
 /* mode: 'L' = lecture, 'E' = écriture */
 FICHIER *ouvrir(const char *nom, char mode);
 int fermer(FICHIER*f);

@@ -4,6 +4,26 @@
 
 int main (int argc, char **argv)
 {
+  char *buf_stdout = malloc (sizeof(char) * BUFFER_SIZE);
+    char *buf_stderr = malloc (sizeof(char) * BUFFER_SIZE);
+        FICHIER stdout_s = { 
+        stdout->file_descriptor= 1, 
+        stdout->file_buffer = buf_stdout,
+        stdout->mode = 'E',
+        stdout->current_pos = 0, 
+        stdout->buff_size = 0
+        };
+    FICHIER stderr_s = {  
+        stdout->file_descriptor = 2, 
+        stdout->file_buffer = buf_stderr, 
+        stdout->mode = 'E',
+        stdout->current_pos = 0, 
+        stdout->buff_size = 0
+        };
+    stdout = &stdout_s;
+    stderr = &stderr_s;
+
+
   FICHIER *f1, *f2;
   int n;
   if (argc != 3) exit (-1);
@@ -12,6 +32,7 @@ int main (int argc, char **argv)
   if (f1 == NULL) exit (-1);
 
   n = fecriref (f1, "Test char: '%c' and string: '%s' with normal number 12\n", 'a', "bonjour");
+  ecriref("%d\n", n);
   fecriref (f1, "Test number: '%d' char written on the above line\n", n);
 
   for (n=-11;n<11;n++)

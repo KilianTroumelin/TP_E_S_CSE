@@ -3,8 +3,7 @@
 #include <sys/time.h>
 #include <assert.h>
 
-#define MEMORY_SIZE 1280000 /* 1,3 Mo */
-#define BUFFER_SIZE 1024
+#define MEMORY_SIZE 128000 /* 1,3 Mo */
 //#define DEBUG
 
 char MEMORY[MEMORY_SIZE];
@@ -41,6 +40,7 @@ void mem_write (FICHIER* f)
 #endif
 
     lr = ecrire (MEMORY + count, 1, num, f);
+    
 #ifdef DEBUG
     if (lr != num)
       ecriref (" -- Wrote only %d octets\n", lr);
@@ -63,12 +63,14 @@ void mem_read (FICHIER* f, char* buff)
     ecriref ("Reading  % 8d \\ % 8d octets\n", num, count);
 #endif
     lr = lire (buff, 1, num, f);
+    ecriref("%d\n",num);
 #ifdef DEBUG
     if (lr != num)
       ecriref (" -- Read only %d octets\n", lr);
 #endif
     buff += lr;
     count += lr;
+    ecriref("%d\n",count);
     assert (count <= MEMORY_SIZE);
   } while (lr);
   ecriref ("Done\n");
@@ -81,8 +83,7 @@ void mem_compare (char* ref, char *buff)
   ecriref ("Comparing memories...\n");
   for (i=0; i<MEMORY_SIZE; i++) {
     if (ref[i] != buff[i]) {
-      fecriref(stderr, "ERROR %c != %c at index %d\n", 
-          ref[i], buff[i], i);
+      fecriref(stderr, "ERROR %c != %c at index %d\n", ref[i], buff[i], i);
     }
   }
   ecriref ("Done\n");
@@ -130,7 +131,7 @@ int main(int argc, char *argv[])
       exit (-1);
     mem_read (f, buffer);
     mem_compare (MEMORY, buffer);
-    free (buffer);
+    free(buffer);
     fermer (f);
   }
 
