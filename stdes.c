@@ -35,32 +35,26 @@ int fermer(FICHIER*f){
 }
 
 int lire(void *p, unsigned int taille, unsigned int nbelem, FICHIER *f){
-   if(f->buff_size==0) return 0; 
-   unsigned int nbBytes=taille*nbelem;
-       if (nbBytes>BUFFER_SIZE){
-        memcpy(p,f->file_buffer, f->current_pos);
-        vider(f);
-        f->buff_size=read(f->file_descriptor, p, nbBytes);
-        return nbelem;
-    }else if (nbBytes>BUFFER_SIZE-f->current_pos){
-        memcpy(p, f->file_buffer,f->current_pos);
-        memcpy(f->file_buffer, f->file_buffer+f->current_pos, BUFFER_SIZE-f->current_pos);
-        f->buff_size=BUFFER_SIZE-f->current_pos;
+    if(f->buff_size==0) return 0;
+    unsigned int nbBytes=taille*nbelem;
+    if (nbBytes>(f->buff_size-f->current_pos)){
+        memcpy(p, f->file_buffer+f->current_pos, f->buff_size-f->current_pos);
+        int bwrite=f->buff_size-f->current_pos;
+        f->current_pos+=bwrite;
+        int rest=read(f->file_descriptor, p+bwrite, nbBytes-bwrite);
+        f->buff_size=read(f->file_descriptor, &f->file_buffer[0], BUFFER_SIZE);
         f->current_pos=0;
-        int rest=read(f->file_descriptor, f->file_buffer+f->buff_size, BUFFER_SIZE-f->buff_size);
-        f->buff_size+=rest;
-        if (nbBytes>f->buff_size)
-        {
-            return 0;
+        return ((bwrite+rest)/taille);
+    }else
+    {
+        memcpy(p, f->file_buffer+f->current_pos, nbBytes);
+        f->current_pos+=nbBytes;
+        if (f->current_pos>=f->buff_size){
+            f->buff_size=read(f->file_descriptor, &f->file_buffer[0], BUFFER_SIZE);
+            f->current_pos=0;
         }
-    }
-    memcpy(p, f->file_buffer+f->current_pos, nbBytes);
-    f->current_pos+=nbBytes;
-    if (f->current_pos==f->buff_size){
-        f->buff_size=read(f->file_descriptor, f->file_buffer, BUFFER_SIZE);
-        f->current_pos=0;
-    }
     return nbelem;
+    }
 }
 
 int ecrire(const void *p, unsigned int taille, unsigned int nbelem, FICHIER *f){
@@ -84,72 +78,6 @@ int vider(FICHIER *f){
     f->buff_size=0;
     f->current_pos=0;
     return n;
-}
-
-int pw(int n,int p){
-    for (int i = 0; i < p; i++)
-    {
-        n=n*10;
-    }
-    return n;
-}
-
-char *_itoa(int v, char *str){
-    
-    for (int i = 9; i >= 0; i--)
-    {
-        switch ((v/pw(1,i))%10)
-        {
-        case 0 :
-            str[9-i]='0';
-            break;
-        case 1 :
-            str[9-i]='1';
-            break;
-        case 2 :
-            str[9-i]='2';
-            break;
-        case 3 :
-            str[9-i]='3';
-            break;
-        case 4 :
-            str[9-i]='4';
-            break;
-        case 5 :
-            str[9-i]='5';
-            break;
-        case 6 :
-            str[9-i]='6';
-            break;
-        case 7 :
-            str[9-i]='7';
-            break;
-        case 8 :
-            str[9-i]='8';
-            break;
-        case 9 :
-            str[9-i]='9';
-            break;
-        }
-    }
-    return str;
-}
-
-int rem_zero(char *str_in){
-    for (int i = 0; i < 10; i++)
-    {
-        if (str_in[i] != '0')
-            return i;
-    }
-    return 0;
-}
-
-void s_itoa(char *str1, char *str2, int taille){
-    taille=10-taille;
-    for (int i = 0; i < taille; i++)
-    {
-        str2[i]+=str1[10-(taille-i)];
-    }
 }
 
 char *_strrev(char *str)
@@ -226,16 +154,17 @@ int fecriref (FICHIER *f, const char *format, ...){
         case 'd':              // int 
             int v = va_arg(ap, int);
             char str_itoa[10];
-            /*char str_out[10];
-            _itoa(v, str_itoa);
-            s_itoa(str_itoa, str_out, rem_zero(str_itoa));
-            
-            wr_char+= strlen(str_out);
-            bzero(str_itoa,10);
-            bzero(str_out,10);*/
+            if (v==0)
+            {
+                char n='0';
+                ecrire(&n, 1, 1, f);
+                format++;
+                wr_char+=1;
+                break;
+            }else {            
             __itoa(v,str_itoa,10);
             int l=strlen(str_itoa);
-            ecrire(str_itoa, l, 1, f);
+            ecrire(str_itoa, l, 1, f);}
             format++;
             wr_char+=strlen(str_itoa);
             break;
@@ -247,9 +176,6 @@ int fecriref (FICHIER *f, const char *format, ...){
             break;
         }
     }
-    char nul='\0';
-    ecrire(&nul, 1,1,f);
-    wr_char+=1;
     va_end(ap);
     return wr_char;
 }

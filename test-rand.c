@@ -36,7 +36,7 @@ void mem_write (FICHIER* f)
       num = MEMORY_SIZE - count;
 
 #ifdef DEBUG
-    ecriref ("Writting % 8d / % 8d octets\n", num, count);
+    ecriref ("Writting %d / %d octets\n", num, count);
 #endif
 
     lr = ecrire (MEMORY + count, 1, num, f);
@@ -60,17 +60,15 @@ void mem_read (FICHIER* f, char* buff)
   do {
     num = RAND_NUM ;
 #ifdef DEBUG
-    ecriref ("Reading  % 8d \\ % 8d octets\n", num, count);
+    ecriref ("Reading  %d \\ %d octets\n", num, count);
 #endif
     lr = lire (buff, 1, num, f);
-    ecriref("%d\n",num);
 #ifdef DEBUG
     if (lr != num)
       ecriref (" -- Read only %d octets\n", lr);
 #endif
     buff += lr;
     count += lr;
-    ecriref("%d\n",count);
     assert (count <= MEMORY_SIZE);
   } while (lr);
   ecriref ("Done\n");
