@@ -22,7 +22,7 @@ FICHIER *ouvrir(const char *nom, char mode){
             file->mode='E';
         }
         else
-        return 0;
+            return 0;
     return file;
 }
 
