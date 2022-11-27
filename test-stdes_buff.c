@@ -6,6 +6,7 @@ int main(int argc, char *argv[])
     FICHIER *f2; //fichier pour ecrire
 
     char c;
+    
     if (argc != 3)
         exit(-1);
     f1 = ouvrir (argv[1], 'L');
