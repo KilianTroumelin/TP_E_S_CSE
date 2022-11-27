@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
 	char *buf_stdout = malloc (sizeof(char) * BUFFER_SIZE);
     char *buf_stderr = malloc (sizeof(char) * BUFFER_SIZE);
-        FICHIER stdout_s = { 
+        FICHIER stdout_s = {
         stdout->file_descriptor= 1, 
         stdout->file_buffer = buf_stdout,
         stdout->mode = 'E',
@@ -39,10 +39,8 @@ int main(int argc, char *argv[])
 	if (f2 == NULL)
 		exit (-1);
 
-	lire (&c, 1, 1, f1);
-          ecrire (&c, 1, 1, stdout);
-          ecrire (&c, 1, 1, f2);
-		  vider (stdout);
+	lire (&c, 1, 1500, f1);
+          ecrire (&c, 1, 1500, f2);
 
         fermer (f1);
         fermer (f2);

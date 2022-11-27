@@ -2,7 +2,7 @@
 
 #ifndef _STDES_H
 #define _STDES_H
-#define BUFFER_SIZE 1280
+#define BUFFER_SIZE 1024
 
 
 struct _ES_FICHIER{

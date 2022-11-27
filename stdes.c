@@ -73,7 +73,7 @@ int ecrire(const void *p, unsigned int taille, unsigned int nbelem, FICHIER *f){
 
 int vider(FICHIER *f){
     int n=0;
-    if (f->mode!='L')
+    if (f->buff_size!=0 && f->mode!='L')
         n=write(f->file_descriptor, f->file_buffer, f->buff_size);
     f->buff_size=0;
     f->current_pos=0;
