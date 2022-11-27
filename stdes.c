@@ -5,7 +5,6 @@
 #include <string.h>
 #include <stdarg.h>
 
-
 FICHIER *ouvrir(const char *nom, char mode){
     FICHIER *file=malloc(sizeof(FICHIER));
         file->file_buffer=(void *) malloc(BUFFER_SIZE);

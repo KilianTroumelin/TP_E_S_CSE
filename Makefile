@@ -53,16 +53,16 @@ test-ffunction : test-ffunction.o stdes.o
 test-ffunction.o : test-ffunction.c stdes.h 
 	$(CC) -c $(CFLAGS) -o test-ffunction.o test-ffunction.c
 
-test-syscall : test-syscall.o
-	$(CC) $(CFLAGS) -o test-syscall test-syscall.o $(LDLIBS)
+test-syscall : test-syscall.o stdes.o
+	$(CC) $(CFLAGS) -o test-syscall test-syscall.o stdes.o $(LDLIBS)
 
-test-syscall.o : test-syscall.c
+test-syscall.o : test-syscall.c stdes.h
 	$(CC) -c $(CFLAGS) -o test-syscall.o test-syscall.c
 
-test-stdes_buff : test-stdes_buff.o stdes.o 
+test-stdes_buff : test-stdes_buff.o stdes.o
 	$(CC) $(CFLAGS) -o test-stdes_buff test-stdes_buff.o stdes.o $(LDLIBS)
 
-test-stdes_buff.o : test-ffunction.c stdes.h 
+test-stdes_buff.o : test-ffunction.c stdes.h
 	$(CC) -c $(CFLAGS) -o test-stdes_buff.o test-stdes_buff.c
 
 clean : 
