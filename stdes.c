@@ -9,12 +9,13 @@ FICHIER *ouvrir(const char *nom, char mode){
     FICHIER *file=malloc(sizeof(FICHIER));
         file->file_buffer=(void *) malloc(BUFFER_SIZE);
         file->current_pos=0;
-        if (mode =='L'){
+    //distinction des cas lecture et ecriture
+        if (mode =='L'){                            //lecture
             file->file_descriptor=open(nom, O_RDONLY, 00777);
             file->buff_size=read(file->file_descriptor, file->file_buffer, BUFFER_SIZE);
             file->mode='L';
         }
-        else if (mode =='E')
+        else if (mode =='E')                        //ecriture
         {
             file->file_descriptor=open(nom, O_WRONLY | O_CREAT, 00777);
             file->buff_size=0;
@@ -29,6 +30,7 @@ int fermer(FICHIER*f){
     vider(f);
     fcntl(f->file_descriptor, O_RDWR);
     close(f->file_descriptor);
+    free(f->file_buffer);
     free(f);
     return 0;
 }
@@ -36,7 +38,7 @@ int fermer(FICHIER*f){
 int lire(void *p, unsigned int taille, unsigned int nbelem, FICHIER *f){
     if(f->buff_size==0) return 0;
     unsigned int nbBytes=taille*nbelem;
-    if (nbBytes>(f->buff_size-f->current_pos)){
+    if (nbBytes>(f->buff_size-f->current_pos)){   //cas ou la taille demandé plus grande que capacité restante du buffer
         memcpy(p, f->file_buffer+f->current_pos, f->buff_size-f->current_pos);
         int bwrite=f->buff_size-f->current_pos;
         f->current_pos+=bwrite;
@@ -44,7 +46,7 @@ int lire(void *p, unsigned int taille, unsigned int nbelem, FICHIER *f){
         f->buff_size=read(f->file_descriptor, &f->file_buffer[0], BUFFER_SIZE);
         f->current_pos=0;
         return ((bwrite+rest)/taille);
-    }else
+    }else       // utilisation classique du buffer sans depacement de taille
     {
         memcpy(p, f->file_buffer+f->current_pos, nbBytes);
         f->current_pos+=nbBytes;
@@ -79,6 +81,8 @@ int vider(FICHIER *f){
     return n;
 }
 
+
+//FONCTION PRISE SUR INTERNET
 char *_strrev(char *str)
 {
     int i;
@@ -99,6 +103,7 @@ char *_strrev(char *str)
     return str;
 }
 
+//FONCTION PRISE SUR INTERNET
 char *__itoa(int i, char *strout, int base)
 {
     
@@ -130,13 +135,15 @@ char *__itoa(int i, char *strout, int base)
     return strout;
 }
 
+
+
 int fecriref (FICHIER *f, const char *format, ...){
     va_list ap;
     int wr_char=0;
     va_start(ap, format);
-    while (*format != '\0'){
-        if (*format!='%')
-        {
+    while (*format != '\0'){  //parcour de la chaine
+        if (*format!='%')   //test du caracter courant
+        {                   //pas % on ecrit le caractere lu et on continue
             ecrire(format, 1,1,f);
             format++;
             wr_char+=1;
@@ -144,7 +151,7 @@ int fecriref (FICHIER *f, const char *format, ...){
         }
         format++;
          switch (*format) {
-        case 'c':              // char 
+        case 'c':              // charactere
             char c =  va_arg(ap, int);
             ecrire(&c, sizeof(char), 1, f);
             format++;
@@ -153,21 +160,21 @@ int fecriref (FICHIER *f, const char *format, ...){
         case 'd':              // int 
             int v = va_arg(ap, int);
             char str_itoa[10];
-            if (v==0)
+            if (v==0)       //écriture en brut du caractere '0' pour une raison obscure
             {
                 char n='0';
                 ecrire(&n, 1, 1, f);
                 format++;
                 wr_char+=1;
                 break;
-            }else {            
+            }else {
             __itoa(v,str_itoa,10);
             int l=strlen(str_itoa);
             ecrire(str_itoa, l, 1, f);}
             format++;
             wr_char+=strlen(str_itoa);
             break;
-        case 's':              // string 
+        case 's':              // chaine de caractere
             char *str = va_arg(ap, char*);
             ecrire(str, strlen(str), 1 , f);
             format++;
@@ -180,6 +187,8 @@ int fecriref (FICHIER *f, const char *format, ...){
 }
 
 /* directly in stdout */
+// code identique a fecriref sauf qu'on ecrit sur la sortie standard
+// possibilite tres probable d'eviter la duplication de code mais tant pis
 int ecriref (const char *format, ...){
     va_list ap;
     int wr_char=0;
@@ -233,83 +242,7 @@ int ecriref (const char *format, ...){
     return wr_char;
 }
 
+//fonction non traité :(
 int fliref (FICHIER *f, const char *format, ...){
-/*   va_list vl;
-    int i = 0,j=0;
-    va_start(vl, format);
-    while (format && format[i])
-    {
-        if (format[i] == '%')
-        {
-            i++;
-            switch (format[i])
-            {
-            case 'c':
-            {
-                char *c = va_arg(vl, char *);
-                lire(c, sizeof(*c), 1, f);
-                i++;
-                break;
-            }
-            case 'd':
-            {
-                int *v = va_arg(vl, int *);
-                int bool = 1;
-                char str[10];
-                int j = 0;
-                while (bool == 1)
-                {
-                    lire(&str[j], 1, 1, f);
-                    if (str[j] == format[i + 1])
-                    {
-                        str[j] = '\0';
-                        bool = 0;
-                    }
-                    else
-                        j++;
-                }
-                *v = atoi(str);
-                i++;
-            }
-            case 's':
-            {
-                int bool = 1;
-                char *temp = va_arg(vl, char *);
-                int j = 0;
-
-                while (bool == 1)
-                {
-                    lire(&temp[j], 1, 1, f);
-
-                    if (temp[j] == format[i + 1])
-                    {
-                        temp[j] = '\0';
-                        bool = 0;
-                        f->current_pos--;
-                    }
-                    else
-                        j++;
-                }
-                i++;
-            }
-            default:
-            {
-                char c[1];
-                lire(c, 1, 1, f);
-                i++;
-                break;
-            }
-            }
-        }
-        else
-        {
-            char c[1];
-            lire(c, 1, 1, f);
-            i++;
-        }
-        j++;
-    }
-    va_end(vl);
-    return j;*/
     return 0;
 }
