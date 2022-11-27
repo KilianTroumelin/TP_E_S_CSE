@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
           //ecrire (&c, 1, 1, stdout);
           ecrire (&c, 1, 1, f2);
 	}
-/*        vider (stdout);*/
+        //vider (stdout);
 
         fermer (f1);
         fermer (f2);

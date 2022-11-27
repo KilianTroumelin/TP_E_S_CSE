@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
     stderr = &stderr_s;
 
     char c;
-    FICHIER *f1=ouvrir("/home/vmubuntu/TP_E_S_CSE/test_file.txt", 'L');
-    FICHIER *f2=ouvrir("/home/vmubuntu/TP_E_S_CSE/test_dest.txt", 'E');
+    FICHIER *f1=ouvrir("/home/vmubuntu/Téléchargements/TP_E_S_CSE/test_file.txt", 'L');
+    FICHIER *f2=ouvrir("/home/vmubuntu/Téléchargements/TP_E_S_CSE/test_dest.txt", 'E');
     int n=0;
     ecriref("%d\n", 0);
     while (lire (&c, 1, 1, f1) == 1) {
