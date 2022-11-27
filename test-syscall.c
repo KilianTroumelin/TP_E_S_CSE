@@ -3,6 +3,9 @@
 #include <sys/uio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "temps.h"
+#include <sys/time.h>
+#include <sys/resource.h>
 
 int main(int argc, char *argv[])
 {
@@ -10,8 +13,13 @@ int main(int argc, char *argv[])
     int f2; //fichier pour ecrire
     char c;
 
+    struct timeval temps1;
+    struct timeval temps2;
+
     if (argc != 3)
         exit(-1);
+
+    gettimeofday(&temps1, NULL);
     f1 = open (argv[1], O_RDONLY);
     if (f1 == -1)
         exit (-1);
@@ -25,5 +33,10 @@ int main(int argc, char *argv[])
 
     close (f1);
     close (f2);
+    gettimeofday(&temps2, NULL);
+    long long int tps1 = to_usec(temps1);
+    long long int tps2 = to_usec(temps2);
+    long long int tempsprocess = tps2 - tps1;
+    printf("%lld \n", tempsprocess);
     return 0;
 }
