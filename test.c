@@ -3,6 +3,27 @@
 
 int main(int argc, char *argv[])
 {
+	char *buf_stdout = malloc (sizeof(char) * BUFFER_SIZE);
+    char *buf_stderr = malloc (sizeof(char) * BUFFER_SIZE);
+        FICHIER stdout_s = { 
+        stdout->file_descriptor= 1, 
+        stdout->file_buffer = buf_stdout,
+        stdout->mode = 'E',
+        stdout->current_pos = 0, 
+        stdout->buff_size = 0
+        };
+    FICHIER stderr_s = {  
+        stdout->file_descriptor = 2, 
+        stdout->file_buffer = buf_stderr, 
+        stdout->mode = 'E',
+        stdout->current_pos = 0, 
+        stdout->buff_size = 0
+        };
+    stdout = &stdout_s;
+    stderr = &stderr_s;
+
+
+
 	FICHIER *f1;
 	FICHIER *f2;
 	char c;
@@ -18,11 +39,10 @@ int main(int argc, char *argv[])
 	if (f2 == NULL)
 		exit (-1);
 
-	while (lire (&c, 1, 1, f1) == 1) {
-          //ecrire (&c, 1, 1, stdout);
+	lire (&c, 1, 1, f1);
+          ecrire (&c, 1, 1, stdout);
           ecrire (&c, 1, 1, f2);
-	}
-/*        vider (stdout);*/
+		  vider (stdout);
 
         fermer (f1);
         fermer (f2);

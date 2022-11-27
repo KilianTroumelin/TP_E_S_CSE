@@ -203,12 +203,21 @@ int ecriref (const char *format, ...){
         case 'd':              // int 
             int v = va_arg(ap, int);
             char str_itoa[10];
+            if (v==0)
+            {
+                char n='0';
+                ecrire(&n, 1, 1, stdout);
+                format++;
+                wr_char+=1;
+                break;
+            }else { 
             __itoa(v,str_itoa,10);
             int l=strlen(str_itoa);
             ecrire(str_itoa, l, 1, stdout);
             format++;
             wr_char+=strlen(str_itoa);
             break;
+            }
         case 's':              // string 
             char *str = va_arg(ap, char*);
             ecrire(str, strlen(str), 1 , stdout);
@@ -226,5 +235,82 @@ int ecriref (const char *format, ...){
 }
 
 int fliref (FICHIER *f, const char *format, ...){
-return 0;
+/*   va_list vl;
+    int i = 0,j=0;
+    va_start(vl, format);
+    while (format && format[i])
+    {
+        if (format[i] == '%')
+        {
+            i++;
+            switch (format[i])
+            {
+            case 'c':
+            {
+                char *c = va_arg(vl, char *);
+                lire(c, sizeof(*c), 1, f);
+                i++;
+                break;
+            }
+            case 'd':
+            {
+                int *v = va_arg(vl, int *);
+                int bool = 1;
+                char str[10];
+                int j = 0;
+                while (bool == 1)
+                {
+                    lire(&str[j], 1, 1, f);
+                    if (str[j] == format[i + 1])
+                    {
+                        str[j] = '\0';
+                        bool = 0;
+                    }
+                    else
+                        j++;
+                }
+                *v = atoi(str);
+                i++;
+            }
+            case 's':
+            {
+                int bool = 1;
+                char *temp = va_arg(vl, char *);
+                int j = 0;
+
+                while (bool == 1)
+                {
+                    lire(&temp[j], 1, 1, f);
+
+                    if (temp[j] == format[i + 1])
+                    {
+                        temp[j] = '\0';
+                        bool = 0;
+                        f->current_pos--;
+                    }
+                    else
+                        j++;
+                }
+                i++;
+            }
+            default:
+            {
+                char c[1];
+                lire(c, 1, 1, f);
+                i++;
+                break;
+            }
+            }
+        }
+        else
+        {
+            char c[1];
+            lire(c, 1, 1, f);
+            i++;
+        }
+        j++;
+    }
+    va_end(vl);
+    return j;*/
+    return 0;
 }

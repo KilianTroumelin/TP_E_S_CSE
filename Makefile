@@ -3,7 +3,7 @@ CFLAGS=-Wall -g -O0 -fno-stack-protector
 LDLIBS=-unistd
 RM=rm -f
 
-all : eval-libc test-format test-rand test test-stdes test-ffunction clean
+all : eval-libc test-format test-rand test test-stdes test-ffunction test-syscall test-stdes_buff clean
 
 stdes : stdes.o 
 	$(CC) $(CFLAGS) -o stdes stdes.o $(LDLIBS)
@@ -53,7 +53,17 @@ test-ffunction : test-ffunction.o stdes.o
 test-ffunction.o : test-ffunction.c stdes.h 
 	$(CC) -c $(CFLAGS) -o test-ffunction.o test-ffunction.c
 
+test-syscall : test-syscall.o
+	$(CC) $(CFLAGS) -o test-syscall test-syscall.o $(LDLIBS)
 
+test-syscall.o : test-syscall.c
+	$(CC) -c $(CFLAGS) -o test-syscall.o test-syscall.c
+
+test-stdes_buff : test-stdes_buff.o stdes.o 
+	$(CC) $(CFLAGS) -o test-stdes_buff test-stdes_buff.o stdes.o $(LDLIBS)
+
+test-stdes_buff.o : test-ffunction.c stdes.h 
+	$(CC) -c $(CFLAGS) -o test-stdes_buff.o test-stdes_buff.c
 
 clean : 
 	$(RM) *.o
